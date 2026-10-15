@@ -191,11 +191,13 @@ struct LatestNoteWidgetView: View {
     }
 
     private var link: URL {
-        if let id = snapshot?.noteID {
-            return URL(string: "voicenotes://play/\(id.uuidString)") ?? URL(string: "voicenotes://inbox")!
+        if let id = snapshot?.noteID, let url = URL(string: "voicenotes://play/\(id.uuidString)") {
+            return url
         }
-        return URL(string: "voicenotes://inbox")!
+        return Self.inboxURL
     }
+
+    private static let inboxURL = URL(string: "voicenotes://inbox")!
 }
 
 struct VoiceNotesWidget: Widget {
