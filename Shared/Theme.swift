@@ -19,8 +19,15 @@ enum Theme {
 
     private static func adaptive(light: UInt32, dark: UInt32) -> Color {
         Color(uiColor: UIColor { traits in
-            UIColor(Color(hex: traits.userInterfaceStyle == .dark ? dark : light))
+            uiColor(hex: traits.userInterfaceStyle == .dark ? dark : light)
         })
+    }
+
+    private static func uiColor(hex: UInt32) -> UIColor {
+        let red = CGFloat((hex >> 16) & 0xFF) / 255
+        let green = CGFloat((hex >> 8) & 0xFF) / 255
+        let blue = CGFloat(hex & 0xFF) / 255
+        return UIColor(red: red, green: green, blue: blue, alpha: 1)
     }
 }
 

@@ -4,6 +4,19 @@
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>software.anubhavgupta.voicenotes</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>voicenotes</string>
+			</array>
+		</dict>
+	</array>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Voice Notes uses the microphone so you can record a short note for a friend.</string>
 	<key>CFBundleDisplayName</key>
 	<string>Voice Notes</string>
 	<key>CFBundleExecutable</key>

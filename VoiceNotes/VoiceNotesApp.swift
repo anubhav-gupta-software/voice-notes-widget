@@ -2,10 +2,12 @@ import SwiftUI
 
 @main
 struct VoiceNotesApp: App {
+    @State private var store = NoteStore()
+
     var body: some Scene {
         WindowGroup {
-            Text("Voice Notes")
-                .font(.system(.largeTitle, design: .rounded))
+            RootView()
+                .environment(store)
         }
     }
 }

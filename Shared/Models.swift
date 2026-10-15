@@ -71,7 +71,7 @@ struct WidgetSnapshot: Codable, Equatable, Identifiable {
             return min(1, max(0.08, shape))
         }
         return WidgetSnapshot(
-            noteID: UUID(uuidString: "AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE") ?? UUID(),
+            noteID: UUID(uuidString: "E4B3C2A1-9F80-4D11-8A76-1234567890AB")!,
             friendName: "Maya",
             initials: "M",
             photoJPEG: nil,
