@@ -36,6 +36,7 @@ struct InboxView: View {
                         }
                         .listStyle(.plain)
                         .scrollContentBackground(.hidden)
+                        .refreshable { await store.syncNow() }
                     }
                 }
             }
@@ -66,6 +67,7 @@ struct InboxView: View {
             Spacer()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .refreshable { await store.syncNow() }
     }
 
     private var profileButton: some ToolbarContent {

@@ -292,6 +292,7 @@ final class NoteStore {
         save()
         refreshWidget()
         nearby.flush()
+        Task { await syncNow() }
     }
 
     func open(note: VoiceNote, autoplay: Bool) {
@@ -525,5 +526,105 @@ final class NoteStore {
         }
         save()
         refreshWidget()
+    }
+
+    func updateSync(serverURL: String, token: String) {
+        syncSettings.serverURL = serverURL.trimmingCharacters(in: .whitespacesAndNewlines)
+        syncSettings.token = token.trimmingCharacters(in: .whitespacesAndNewlines)
+        save()
+        Task { await syncNow() }
+    }
+
+    func syncNow() async {
+        let settings = syncSettings
+        guard !isSyncing, profile != nil else { return }
+        guard !settings.serverURL.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
+        isSyncing = true
+        defer { isSyncing = false }
+        do {
+            for payload in uploadPayloads() {
+                try await RemoteSync.push(note: payload.note, settings: settings)
+                markUploaded(id: payload.id)
+            }
+            let newest = notes.filter { $0.direction == .received }.map(\.createdAt).max()
+            let since = newest.map { $0.timeIntervalSince1970 - 86_400 } ?? 0
+            let incoming = try await RemoteSync.pull(
+                recipientCode: profile?.inviteCode ?? "",
+                since: since,
+                settings: settings
+            )
+            for note in incoming {
+                importRemote(note)
+            }
+            syncError = nil
+        } catch let error as RemoteSyncError {
+            syncError = error.errorDescription
+        } catch {
+            syncError = "Couldn't reach the sync server."
+        }
+    }
+
+    private struct Upload {
+        var id: UUID
+        var note: RemoteNote
+    }
+
+    private func uploadPayloads() -> [Upload] {
+        guard let profile else { return [] }
+        var payloads: [Upload] = []
+        for note in notes where note.direction == .sent && !note.uploaded {
+            guard let friendID = note.friendID, let friend = friend(id: friendID) else { continue }
+            let url = Disk.audioURL(filename: note.audioFilename)
+            guard let audio = try? Data(contentsOf: url) else { continue }
+            let remote = RemoteNote(
+                id: note.id,
+                senderCode: profile.inviteCode,
+                senderName: profile.displayName,
+                senderPhotoBase64: profile.photoJPEG?.base64EncodedString(),
+                recipientCode: friend.inviteCode,
+                createdAt: note.createdAt.timeIntervalSince1970,
+                duration: note.duration,
+                waveform: note.waveform,
+                audioBase64: audio.base64EncodedString()
+            )
+            payloads.append(Upload(id: note.id, note: remote))
+        }
+        return payloads
+    }
+
+    private func markUploaded(id: UUID) {
+        guard let index = notes.firstIndex(where: { $0.id == id }) else { return }
+        var updated = notes
+        updated[index].uploaded = true
+        if updated[index].delivery == .waiting {
+            updated[index].delivery = .delivered
+        }
+        notes = updated
+        save()
+    }
+
+    private func importRemote(_ note: RemoteNote) {
+        let photo = note.senderPhotoBase64.flatMap { Data(base64Encoded: $0) }
+        upsertFriend(code: note.senderCode, name: note.senderName, photo: photo, seen: false)
+        guard let audio = Data(base64Encoded: note.audioBase64) else { return }
+        let temp = FileManager.default.temporaryDirectory.appendingPathComponent("remote-\(note.id.uuidString).m4a")
+        do {
+            try audio.write(to: temp, options: .atomic)
+        } catch {
+            return
+        }
+        let meta = PeerNoteMeta(
+            id: note.id,
+            senderCode: note.senderCode,
+            senderName: note.senderName,
+            recipientCode: note.recipientCode,
+            createdAt: Date(timeIntervalSince1970: note.createdAt),
+            duration: note.duration,
+            waveform: note.waveform
+        )
+        _ = importIncoming(meta: meta, audioURL: temp)
+        if FileManager.default.fileExists(atPath: temp.path) {
+            try? FileManager.default.removeItem(at: temp)
+        }
     }
 }

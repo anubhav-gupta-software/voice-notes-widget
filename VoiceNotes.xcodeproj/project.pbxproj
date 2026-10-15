@@ -28,6 +28,9 @@
 		BB5E53B6BF8ED86CA196387B /* PBXBuildFile */ = {
 			isa = PBXBuildFile; fileRef = EE1D431964255BE36CF68836;
 		};
+		7E44E4BFF00975C9F9C02CED /* PBXBuildFile */ = {
+			isa = PBXBuildFile; fileRef = DB6E340ECFB4724FB300F42C;
+		};
 		FFE0DE2563F479A30D415F96 /* PBXBuildFile */ = {
 			isa = PBXBuildFile; fileRef = 063B41920BD3A4C7518BF174;
 		};
@@ -151,6 +154,9 @@
 		B8DA0106ABF3EB09A50E89D9 /* PBXFileReference */ = {
 			isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>";
 		};
+		BBD0DC3F79DF6E3D4B81AAD4 /* PBXFileReference */ = {
+			isa = PBXFileReference; lastKnownFileType = text.script.python; path = server.py; sourceTree = "<group>";
+		};
 		A1D8D6CB7F3E940CC6F3B075 /* PBXFileReference */ = {
 			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotePlayer.swift; sourceTree = "<group>";
 		};
@@ -171,6 +177,9 @@
 		};
 		EE1D431964255BE36CF68836 /* PBXFileReference */ = {
 			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NearbySync.swift; sourceTree = "<group>";
+		};
+		DB6E340ECFB4724FB300F42C /* PBXFileReference */ = {
+			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteSync.swift; sourceTree = "<group>";
 		};
 		063B41920BD3A4C7518BF174 /* PBXFileReference */ = {
 			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Components.swift; sourceTree = "<group>";
@@ -260,6 +269,7 @@
 			5619E268CFFE28118C19FC6A /* Config */,
 			DD60F8C5E3534BC62F3FFE8F /* VoiceNotes */,
 			93E1AFC8973C3A62AB23A0EE /* VoiceNotesWidget */,
+			D633A4C5EFD335B2E43D371E /* backend */,
 			44C7E229889FE9D1BB841A79 /* Shared */,
 			00C45FD35CB0F9C5F764F070 /* Products */,
 			);
@@ -335,6 +345,7 @@
 			isa = PBXGroup;
 			children = (
 			EE1D431964255BE36CF68836 /* NearbySync.swift */,
+			DB6E340ECFB4724FB300F42C /* RemoteSync.swift */,
 			);
 			path = Sync;
 			sourceTree = "<group>";
@@ -361,6 +372,14 @@
 			E12D51F446DEB278F3C7B739 /* VoiceNotesWidget.swift */,
 			);
 			path = VoiceNotesWidget;
+			sourceTree = "<group>";
+		};
+		D633A4C5EFD335B2E43D371E /* PBXGroup */ = {
+			isa = PBXGroup;
+			children = (
+			BBD0DC3F79DF6E3D4B81AAD4 /* server.py */,
+			);
+			path = backend;
 			sourceTree = "<group>";
 		};
 		00C45FD35CB0F9C5F764F070 /* PBXGroup */ = {
@@ -485,6 +504,7 @@
 			28044BD6821EF36C3E722F5C,
 			989EEEB6E79965E2901CCB18,
 			BB5E53B6BF8ED86CA196387B,
+			7E44E4BFF00975C9F9C02CED,
 			FFE0DE2563F479A30D415F96,
 			B70A222B828728A513903CE8,
 			193BFEF51E2D07568540940C,

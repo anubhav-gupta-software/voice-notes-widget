@@ -9,6 +9,8 @@ struct ProfileSheet: View {
     @State private var photoItem: PhotosPickerItem?
     @State private var photoData: Data?
     @State private var copied = false
+    @State private var serverURL = ""
+    @State private var token = ""
 
     var body: some View {
         NavigationStack {
@@ -59,7 +61,41 @@ struct ProfileSheet: View {
                                 }
                             }
 
+                            Card {
+                                VStack(alignment: .leading, spacing: 8) {
+                                    Text("Sync server")
+                                        .font(.system(.headline, design: .rounded))
+                                        .foregroundStyle(Theme.ink)
+                                    Text("Optional. Leave this blank to stay on the phone and on nearby Wi-Fi. A server carries a note when you are apart. No API key unless you set one.")
+                                        .font(.subheadline)
+                                        .foregroundStyle(Theme.secondary)
+                                    TextField("http://192.168.1.20:8787", text: $serverURL)
+                                        .textInputAutocapitalization(.never)
+                                        .autocorrectionDisabled()
+                                        .keyboardType(.URL)
+                                        .padding(12)
+                                        .background(Theme.paper, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+                                    TextField("Token, if the server asks", text: $token)
+                                        .textInputAutocapitalization(.never)
+                                        .autocorrectionDisabled()
+                                        .padding(12)
+                                        .background(Theme.paper, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+                                    Button(store.isSyncing ? "Syncing…" : "Save server") {
+                                        store.updateSync(serverURL: serverURL, token: token)
+                                    }
+                                    .font(.system(.body, design: .rounded).weight(.semibold))
+                                    .foregroundStyle(Theme.coral)
+                                    .disabled(store.isSyncing)
+                                    if let syncError = store.syncError {
+                                        Text(syncError)
+                                            .font(.footnote)
+                                            .foregroundStyle(Theme.coral)
+                                    }
+                                }
+                            }
+
                             FillButton(title: "Save", systemImage: "checkmark") {
+                                store.updateSync(serverURL: serverURL, token: token)
                                 store.updateProfile(name: name, photo: photoData)
                                 dismiss()
                             }
@@ -79,6 +115,8 @@ struct ProfileSheet: View {
         .onAppear {
             name = store.profile?.displayName ?? ""
             photoData = store.profile?.photoJPEG
+            serverURL = store.syncSettings.serverURL
+            token = store.syncSettings.token
         }
         .onChange(of: photoItem) { _, item in
             guard let item else { return }
@@ -88,7 +126,7 @@ struct ProfileSheet: View {
                 }
             }
         }
-        .presentationDetents([.medium, .large])
+        .presentationDetents([.large])
         .presentationDragIndicator(.visible)
     }
 
