@@ -10,3 +10,5 @@ xcuserdata/
 *.dSYM
 Config/Local.xcconfig
 backend/data/
+__pycache__/
+*.pyc

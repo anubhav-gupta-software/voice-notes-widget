@@ -72,8 +72,8 @@ struct OnboardingView: View {
         .onChange(of: photoItem) { _, item in
             guard let item else { return }
             Task {
-                if let data = try? await item.loadTransferable(type: Data.self) {
-                    photoData = ImageThumb.jpeg(from: data) ?? data
+                if let picked = try? await item.loadTransferable(type: PickedPhoto.self) {
+                    photoData = ImageThumb.jpeg(from: picked.data) ?? picked.data
                 }
             }
         }

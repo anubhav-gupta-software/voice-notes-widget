@@ -1,4 +1,16 @@
+import CoreTransferable
 import UIKit
+import UniformTypeIdentifiers
+
+struct PickedPhoto: Transferable {
+    var data: Data
+
+    static var transferRepresentation: some TransferRepresentation {
+        DataRepresentation(importedContentType: .image) { data in
+            PickedPhoto(data: data)
+        }
+    }
+}
 
 enum ImageThumb {
     static func jpeg(from data: Data, maxPixel: CGFloat = 280) -> Data? {
