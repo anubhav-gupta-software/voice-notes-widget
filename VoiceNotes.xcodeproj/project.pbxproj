@@ -10,8 +10,44 @@
 		381FCC86CB7A4B69F5B4DC3E /* PBXBuildFile */ = {
 			isa = PBXBuildFile; fileRef = 6E583A9AFAFA95BB77F3DE4A;
 		};
+		10953CD8BA3CE7DF7714831F /* PBXBuildFile */ = {
+			isa = PBXBuildFile; fileRef = 4F87EE187AA255B754A5F9C0;
+		};
+		7FB3296F91945206C15F9146 /* PBXBuildFile */ = {
+			isa = PBXBuildFile; fileRef = BA2F3257209BED9F97972A1E;
+		};
+		DBA3B228CD5123A3D434EEDC /* PBXBuildFile */ = {
+			isa = PBXBuildFile; fileRef = 44FC4CAD6EECEC28ADEE2F0A;
+		};
+		7AF0037262F6A52033CA926D /* PBXBuildFile */ = {
+			isa = PBXBuildFile; fileRef = 644032F41F2325C223F95B82;
+		};
+		613B8FF7B19A3497F8A3F326 /* PBXBuildFile */ = {
+			isa = PBXBuildFile; fileRef = 761E1B62E5DB0F2CDBC7FA30;
+		};
+		51BB0D5600F5392C4461CCFB /* PBXBuildFile */ = {
+			isa = PBXBuildFile; fileRef = 7C0331F8559FA6CC76FE0B66;
+		};
 		57B73B52FD516B369E827955 /* PBXBuildFile */ = {
 			isa = PBXBuildFile; fileRef = E12D51F446DEB278F3C7B739;
+		};
+		D5F2882B5865A00C5E8D33FA /* PBXBuildFile */ = {
+			isa = PBXBuildFile; fileRef = 4F87EE187AA255B754A5F9C0;
+		};
+		7F1BF6B23B019F5B8EF12F90 /* PBXBuildFile */ = {
+			isa = PBXBuildFile; fileRef = BA2F3257209BED9F97972A1E;
+		};
+		6DC4001DCAE58231C71D46E6 /* PBXBuildFile */ = {
+			isa = PBXBuildFile; fileRef = 44FC4CAD6EECEC28ADEE2F0A;
+		};
+		9799568EE7C1ECCA3E6F6731 /* PBXBuildFile */ = {
+			isa = PBXBuildFile; fileRef = 644032F41F2325C223F95B82;
+		};
+		30E9C775BE8C0B747C9EAD61 /* PBXBuildFile */ = {
+			isa = PBXBuildFile; fileRef = 761E1B62E5DB0F2CDBC7FA30;
+		};
+		745F61AD19D7FDCEDB5846D0 /* PBXBuildFile */ = {
+			isa = PBXBuildFile; fileRef = 7C0331F8559FA6CC76FE0B66;
 		};
 		6F8514606B14BB3E6E92CBC5 /* PBXBuildFile */ = {
 			isa = PBXBuildFile; fileRef = 4BEBAA3E1D9E2CC6582566A8;
@@ -73,6 +109,24 @@
 		6E583A9AFAFA95BB77F3DE4A /* PBXFileReference */ = {
 			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceNotesApp.swift; sourceTree = "<group>";
 		};
+		4F87EE187AA255B754A5F9C0 /* PBXFileReference */ = {
+			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppGroup.swift; sourceTree = "<group>";
+		};
+		BA2F3257209BED9F97972A1E /* PBXFileReference */ = {
+			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarView.swift; sourceTree = "<group>";
+		};
+		44FC4CAD6EECEC28ADEE2F0A /* PBXFileReference */ = {
+			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONCoding.swift; sourceTree = "<group>";
+		};
+		644032F41F2325C223F95B82 /* PBXFileReference */ = {
+			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>";
+		};
+		761E1B62E5DB0F2CDBC7FA30 /* PBXFileReference */ = {
+			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>";
+		};
+		7C0331F8559FA6CC76FE0B66 /* PBXFileReference */ = {
+			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaveformView.swift; sourceTree = "<group>";
+		};
 		E12D51F446DEB278F3C7B739 /* PBXFileReference */ = {
 			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceNotesWidget.swift; sourceTree = "<group>";
 		};
@@ -116,6 +170,7 @@
 			5619E268CFFE28118C19FC6A /* Config */,
 			DD60F8C5E3534BC62F3FFE8F /* VoiceNotes */,
 			93E1AFC8973C3A62AB23A0EE /* VoiceNotesWidget */,
+			44C7E229889FE9D1BB841A79 /* Shared */,
 			00C45FD35CB0F9C5F764F070 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -128,6 +183,19 @@
 			9AB9E6398FC9A6A061ECAD43 /* Local.xcconfig.example */,
 			);
 			path = Config;
+			sourceTree = "<group>";
+		};
+		44C7E229889FE9D1BB841A79 /* PBXGroup */ = {
+			isa = PBXGroup;
+			children = (
+			4F87EE187AA255B754A5F9C0 /* AppGroup.swift */,
+			BA2F3257209BED9F97972A1E /* AvatarView.swift */,
+			44FC4CAD6EECEC28ADEE2F0A /* JSONCoding.swift */,
+			644032F41F2325C223F95B82 /* Models.swift */,
+			761E1B62E5DB0F2CDBC7FA30 /* Theme.swift */,
+			7C0331F8559FA6CC76FE0B66 /* WaveformView.swift */,
+			);
+			path = Shared;
 			sourceTree = "<group>";
 		};
 		DD60F8C5E3534BC62F3FFE8F /* PBXGroup */ = {
@@ -266,6 +334,12 @@
 			buildActionMask = 2147483647;
 			files = (
 			381FCC86CB7A4B69F5B4DC3E,
+			10953CD8BA3CE7DF7714831F,
+			7FB3296F91945206C15F9146,
+			DBA3B228CD5123A3D434EEDC,
+			7AF0037262F6A52033CA926D,
+			613B8FF7B19A3497F8A3F326,
+			51BB0D5600F5392C4461CCFB,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -274,6 +348,12 @@
 			buildActionMask = 2147483647;
 			files = (
 			57B73B52FD516B369E827955,
+			D5F2882B5865A00C5E8D33FA,
+			7F1BF6B23B019F5B8EF12F90,
+			6DC4001DCAE58231C71D46E6,
+			9799568EE7C1ECCA3E6F6731,
+			30E9C775BE8C0B747C9EAD61,
+			745F61AD19D7FDCEDB5846D0,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
