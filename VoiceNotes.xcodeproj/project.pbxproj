@@ -25,6 +25,9 @@
 		989EEEB6E79965E2901CCB18 /* PBXBuildFile */ = {
 			isa = PBXBuildFile; fileRef = 79A82DC8F7B0841227529F46;
 		};
+		BB5E53B6BF8ED86CA196387B /* PBXBuildFile */ = {
+			isa = PBXBuildFile; fileRef = EE1D431964255BE36CF68836;
+		};
 		FFE0DE2563F479A30D415F96 /* PBXBuildFile */ = {
 			isa = PBXBuildFile; fileRef = 063B41920BD3A4C7518BF174;
 		};
@@ -166,6 +169,9 @@
 		79A82DC8F7B0841227529F46 /* PBXFileReference */ = {
 			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageThumb.swift; sourceTree = "<group>";
 		};
+		EE1D431964255BE36CF68836 /* PBXFileReference */ = {
+			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NearbySync.swift; sourceTree = "<group>";
+		};
 		063B41920BD3A4C7518BF174 /* PBXFileReference */ = {
 			isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Components.swift; sourceTree = "<group>";
 		};
@@ -289,6 +295,7 @@
 			810CD3AEE9BF500FB9A3D775 /* Audio */,
 			B36AC69A9969CDAD6AB47B60 /* Store */,
 			67C94E7AD94A282AFDE2A72B /* Support */,
+			73ACE1BCE54AE4B033AE097B /* Sync */,
 			9CE69653DFA2B7145387E618 /* Views */,
 			6E583A9AFAFA95BB77F3DE4A /* VoiceNotesApp.swift */,
 			4BEBAA3E1D9E2CC6582566A8 /* Assets.xcassets */,
@@ -322,6 +329,14 @@
 			79A82DC8F7B0841227529F46 /* ImageThumb.swift */,
 			);
 			path = Support;
+			sourceTree = "<group>";
+		};
+		73ACE1BCE54AE4B033AE097B /* PBXGroup */ = {
+			isa = PBXGroup;
+			children = (
+			EE1D431964255BE36CF68836 /* NearbySync.swift */,
+			);
+			path = Sync;
 			sourceTree = "<group>";
 		};
 		9CE69653DFA2B7145387E618 /* PBXGroup */ = {
@@ -469,6 +484,7 @@
 			1FB72A53EBA54041E8C28D9C,
 			28044BD6821EF36C3E722F5C,
 			989EEEB6E79965E2901CCB18,
+			BB5E53B6BF8ED86CA196387B,
 			FFE0DE2563F479A30D415F96,
 			B70A222B828728A513903CE8,
 			193BFEF51E2D07568540940C,

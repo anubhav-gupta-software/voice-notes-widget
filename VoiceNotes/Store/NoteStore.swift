@@ -52,9 +52,14 @@ final class NoteStore {
     var statusMessage: String?
     var syncError: String?
     var isSyncing = false
+    var isPairing = false
+    var nearbyCodes: Set<String> = []
+    var nearbyPeople: [DiscoveredFriend] = []
 
     let recorder = VoiceRecorder()
     let player = NotePlayer()
+    private let nearby = NearbySync()
+    private var pairingTask: Task<Void, Never>?
 
     private var servicesStarted = false
 
@@ -111,6 +116,10 @@ final class NoteStore {
     func startServices() {
         guard !servicesStarted else { return }
         servicesStarted = true
+        nearby.attach(self)
+        if syncSettings.nearbyEnabled {
+            nearby.start()
+        }
         refreshWidget()
     }
 
@@ -126,6 +135,9 @@ final class NoteStore {
         )
         save()
         refreshWidget()
+        if servicesStarted {
+            nearby.start()
+        }
     }
 
     func updateProfile(name: String, photo: Data?) {
@@ -137,6 +149,7 @@ final class NoteStore {
         self.profile = profile
         save()
         refreshWidget()
+        nearby.restart()
         flash("Profile saved.")
     }
 
@@ -157,7 +170,8 @@ final class NoteStore {
         ))
         friends.sort { $0.displayName.localizedCaseInsensitiveCompare($1.displayName) == .orderedAscending }
         save()
-        flash("Added \(code). Notes you record will send when you can reach them.")
+        nearby.reconsider()
+        flash("Added \(code). Notes you record will send when you're nearby, or through a sync server.")
     }
 
     func renameFriend(_ friend: Friend, to name: String) {
@@ -277,6 +291,7 @@ final class NoteStore {
 
         save()
         refreshWidget()
+        nearby.flush()
     }
 
     func open(note: VoiceNote, autoplay: Bool) {
@@ -367,5 +382,148 @@ final class NoteStore {
         Disk.save(friends, name: "friends.json")
         Disk.save(notes, name: "notes.json")
         Disk.save(syncSettings, name: "sync.json")
+    }
+
+    func setNearbyEnabled(_ enabled: Bool) {
+        syncSettings.nearbyEnabled = enabled
+        save()
+        if enabled {
+            nearby.start()
+        } else {
+            stopPairing()
+            nearby.stop()
+        }
+    }
+
+    func startPairing() {
+        guard profile != nil else { return }
+        isPairing = true
+        syncError = nil
+        if !syncSettings.nearbyEnabled {
+            setNearbyEnabled(true)
+        } else {
+            nearby.start()
+        }
+        nearby.reconsider()
+        pairingTask?.cancel()
+        pairingTask = Task {
+            try? await Task.sleep(for: .seconds(90))
+            if !Task.isCancelled {
+                stopPairing()
+            }
+        }
+    }
+
+    func stopPairing() {
+        pairingTask?.cancel()
+        pairingTask = nil
+        isPairing = false
+    }
+
+    func shouldInvite(remoteCode: String) -> Bool {
+        guard let mine = profile?.inviteCode, remoteCode != mine else { return false }
+        let known = friends.contains { $0.inviteCode == remoteCode } || isPairing
+        return known && mine < remoteCode
+    }
+
+    func shouldAccept(remoteCode: String) -> Bool {
+        guard let mine = profile?.inviteCode, remoteCode != mine else { return false }
+        let known = friends.contains { $0.inviteCode == remoteCode } || isPairing
+        return known && mine > remoteCode
+    }
+
+    func pendingOutgoing() -> [VoiceNote] {
+        notes.filter { $0.direction == .sent && $0.delivery == .waiting }
+    }
+
+    func learnPeer(_ remote: PeerProfile) {
+        upsertFriend(code: remote.inviteCode, name: remote.displayName, photo: remote.photoJPEG, seen: true)
+    }
+
+    func applyDiscoveredName(code: String, name: String) {
+        let cleaned = InviteCode.normalize(code)
+        guard let index = friends.firstIndex(where: { $0.inviteCode == cleaned }), !friends[index].hasCustomName else { return }
+        guard !name.isEmpty, name != "Friend \(cleaned)" else { return }
+        var updated = friends
+        updated[index].displayName = name
+        friends = updated
+        save()
+    }
+
+    @discardableResult
+    func importIncoming(meta: PeerNoteMeta, audioURL: URL) -> Bool {
+        guard let profile else { return false }
+        guard meta.recipientCode == profile.inviteCode else { return false }
+        upsertFriend(code: meta.senderCode, name: meta.senderName, photo: nil, seen: true)
+        if notes.contains(where: { $0.id == meta.id }) {
+            return true
+        }
+        let filename = "\(meta.id.uuidString).m4a"
+        let destination = Disk.audioURL(filename: filename)
+        do {
+            if FileManager.default.fileExists(atPath: destination.path) {
+                try FileManager.default.removeItem(at: destination)
+            }
+            try FileManager.default.moveItem(at: audioURL, to: destination)
+        } catch {
+            return false
+        }
+        let friendID = friends.first { $0.inviteCode == meta.senderCode }?.id
+        notes.append(VoiceNote(
+            id: meta.id,
+            direction: .received,
+            friendID: friendID,
+            createdAt: meta.createdAt,
+            duration: meta.duration,
+            audioFilename: filename,
+            waveform: meta.waveform,
+            isHeard: false,
+            delivery: .delivered,
+            uploaded: true
+        ))
+        save()
+        refreshWidget()
+        let sender = friends.first { $0.inviteCode == meta.senderCode }?.displayName ?? meta.senderName
+        flash("New note from \(sender).")
+        return true
+    }
+
+    func markDelivered(noteID: UUID) {
+        guard let index = notes.firstIndex(where: { $0.id == noteID }) else { return }
+        guard notes[index].delivery != .delivered else { return }
+        var updated = notes
+        updated[index].delivery = .delivered
+        notes = updated
+        save()
+    }
+
+    private func upsertFriend(code: String, name: String, photo: Data?, seen: Bool) {
+        let cleaned = InviteCode.normalize(code)
+        guard cleaned.count == InviteCode.length, cleaned != profile?.inviteCode else { return }
+        if let index = friends.firstIndex(where: { $0.inviteCode == cleaned }) {
+            var updated = friends
+            if !updated[index].hasCustomName, !name.isEmpty {
+                updated[index].displayName = name
+            }
+            if let photo {
+                updated[index].photoJPEG = photo
+            }
+            if seen {
+                updated[index].lastSeenAt = Date()
+            }
+            friends = updated
+        } else {
+            friends.append(Friend(
+                id: UUID(),
+                displayName: name.isEmpty ? "Friend \(cleaned)" : name,
+                inviteCode: cleaned,
+                photoJPEG: photo,
+                addedAt: Date(),
+                lastSeenAt: seen ? Date() : nil,
+                hasCustomName: false
+            ))
+        }
+        save()
+        refreshWidget()
     }
 }

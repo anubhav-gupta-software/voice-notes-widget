@@ -15,6 +15,7 @@ struct FriendsView: View {
                         if let profile = store.profile {
                             codeCard(profile)
                         }
+                        nearbyCard
                         addCard
                         if store.friends.isEmpty {
                             Text("Friends you add show up here. A note waits on this phone until you are on the same Wi-Fi, or until you point both phones at a sync server.")
@@ -88,6 +89,68 @@ struct FriendsView: View {
         }
     }
 
+    private var nearbyCard: some View {
+        Card {
+            VStack(alignment: .leading, spacing: 10) {
+                Toggle(isOn: Binding(
+                    get: { store.syncSettings.nearbyEnabled },
+                    set: { store.setNearbyEnabled($0) }
+                )) {
+                    Text("Nearby")
+                        .font(.system(.headline, design: .rounded))
+                        .foregroundStyle(Theme.ink)
+                }
+                .tint(Theme.coral)
+                Text("When this is on, notes go across the same Wi-Fi. Pair if you haven't swapped codes yet.")
+                    .font(.subheadline)
+                    .foregroundStyle(Theme.secondary)
+                Button(store.isPairing ? "Stop pairing" : "Pair nearby") {
+                    if store.isPairing {
+                        store.stopPairing()
+                    } else {
+                        store.startPairing()
+                    }
+                }
+                .font(.system(.body, design: .rounded).weight(.semibold))
+                .foregroundStyle(Theme.coral)
+                if store.isPairing {
+                    Text("Looking for 90 seconds. The other phone should tap Pair nearby too.")
+                        .font(.footnote)
+                        .foregroundStyle(Theme.secondary)
+                }
+                if let syncError = store.syncError {
+                    Text(syncError)
+                        .font(.footnote)
+                        .foregroundStyle(Theme.coral)
+                }
+                if store.isPairing {
+                    nearbyList
+                }
+            }
+        }
+    }
+
+    private var nearbyList: some View {
+        ForEach(store.nearbyPeople) { person in
+            HStack {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(person.name)
+                        .foregroundStyle(Theme.ink)
+                    Text(person.code)
+                        .font(.caption.monospaced())
+                        .foregroundStyle(Theme.secondary)
+                }
+                Spacer()
+                Button("Add") {
+                    try? store.addFriend(code: person.code)
+                    store.applyDiscoveredName(code: person.code, name: person.name)
+                }
+                .font(.system(.subheadline, design: .rounded).weight(.semibold))
+                .foregroundStyle(Theme.coral)
+            }
+        }
+    }
+
     private var addCard: some View {
         Card {
             VStack(alignment: .leading, spacing: 10) {
@@ -146,6 +209,10 @@ struct FriendsView: View {
     }
 
     private func friendSubtitle(_ friend: Friend) -> String {
+        if store.nearbyCodes.contains(friend.inviteCode) {
+            let waiting = store.waitingCount(for: friend)
+            return waiting > 0 ? "Nearby · \(waiting) waiting" : "Nearby"
+        }
         let waiting = store.waitingCount(for: friend)
         if waiting == 1 { return "1 note waiting to send" }
         if waiting > 1 { return "\(waiting) notes waiting to send" }

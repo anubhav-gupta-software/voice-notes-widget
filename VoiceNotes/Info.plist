@@ -15,6 +15,13 @@
 			</array>
 		</dict>
 	</array>
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_voicenote._tcp</string>
+		<string>_voicenote._udp</string>
+	</array>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>Voice Notes looks for friends on the same Wi-Fi so a note can reach their phone without an account.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Voice Notes uses the microphone so you can record a short note for a friend.</string>
 	<key>CFBundleDisplayName</key>
