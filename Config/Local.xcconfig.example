@@ -1,0 +1,7 @@
+// Copy to Config/Local.xcconfig. That file is gitignored.
+//
+// DEVELOPMENT_TEAM = ABCDE12345
+//
+// Uncomment the next line if a Personal Team refuses the App Group
+// entitlement and you still want the app to install:
+// CODE_SIGN_ENTITLEMENTS =

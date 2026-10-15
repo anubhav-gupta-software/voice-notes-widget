@@ -1,0 +1,12 @@
+// Shared by the app and the widget extension.
+//
+// App Groups are how a Home Screen widget reads the latest note. Apple's
+// supported-capabilities table currently includes App Groups for a free
+// Personal Team. If Xcode still refuses to sign the capability, copy
+// Local.xcconfig.example to Local.xcconfig and set CODE_SIGN_ENTITLEMENTS
+// to empty. The app installs either way; without the group the widget
+// shows its empty state instead of a live note.
+
+CODE_SIGN_ENTITLEMENTS = Config/AppGroup.entitlements
+
+#include? "Local.xcconfig"

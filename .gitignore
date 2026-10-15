@@ -1,0 +1,12 @@
+.DS_Store
+DerivedData/
+build/
+.idea/
+*.xcuserstate
+xcuserdata/
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+Config/Local.xcconfig
+backend/data/
